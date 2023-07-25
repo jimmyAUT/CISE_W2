@@ -14,6 +14,18 @@ jobs:
       matrix:
         node-version: [14.x]
 
+        test-group:
+          [
+            content,
+            graphql,
+            meta,
+            rendering,
+            routing,
+            unit,
+            linting,
+            translations,
+          ]
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -26,8 +38,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run test
-        run: npm test
+      - name: Run tests
+        env:
+          DIFF_FILE: get_diff_files.txt
+          CHANGELOG_CACHE_FILE_PATH: tests/fixtures/changelog-feed.json
+        run: npm test -- tests/${{ matrix.test-group }}/
 
       - name: build
         run: npm run build
